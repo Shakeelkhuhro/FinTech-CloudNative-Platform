@@ -6,9 +6,6 @@ This project is designed as a **portfolio-quality system** to demonstrate how mo
 
 ---
 
-## 🚀 Architecture Overview
-![Architecture Diagram](docs/architecture.png)
-
 **Core Highlights:**
 - **Microservices**: User, Transaction, History (Node.js/Go + React frontend)  
 - **APIs & Gateway**: REST APIs with Nginx reverse proxy  
@@ -36,10 +33,12 @@ FinTech-CloudNative-Platform/
 ├── .github/workflows/    # CI/CD pipelines
 ├── docs/                 # Architecture diagrams, runbooks
 └── README.md
-```
+
+````
+
+---
 
 ## ⚙️ Features
----
 - ✅ Automated **CI/CD pipeline** with GitHub Actions  
 - ✅ **GitOps** deployments with Argo CD  
 - ✅ **Terraform + Ansible** for fully automated infra & config  
@@ -74,8 +73,10 @@ FinTech-CloudNative-Platform/
 ---
 
 ## 🌍 Live Demo
-🔗 [Deployed App Link](https://your-demo-link.com)  
-🔗 [Grafana Public Dashboard](https://your-grafana-link.com)  
+*Soon*
+<!-- 🔗 [Deployed App Link](https://your-demo-link.com) --> 
+<!-- 🔗 [Grafana Public Dashboard](https://your-grafana-link.com)   -->
+
 
 ---
 
@@ -90,12 +91,111 @@ FinTech-CloudNative-Platform/
 
 ---
 
+### 🏗️ System Architecture
+```mermaid
+flowchart TB
+    Dev[Developer] --> GitHubRepo[GitHub Repo]
+    GitHubRepo --> Actions[GitHub Actions CI/CD]
+    Actions --> GHCR[GitHub Container Registry]
+    Actions --> ArgoCD[Argo CD GitOps]
+
+    %% Multi-Cloud Infra
+    subgraph AWS
+        EKS[EKS Cluster]
+        DB1[(MongoDB)]
+        Cache1[(Redis)]
+    end
+
+    subgraph Azure
+        AKS[AKS Cluster]
+        DB2[(MongoDB)]
+        Cache2[(Redis)]
+    end
+
+    %% Deployments
+    ArgoCD --> EKS
+    ArgoCD --> AKS
+
+    %% Microservices inside K8s
+    subgraph Services
+        UserService[User Service]
+        TxnService[Transaction Service]
+        HistoryService[History Service]
+        Frontend[React Frontend]
+        Gateway[Nginx API Gateway]
+    end
+
+    EKS --> Services
+    AKS --> Services
+    Gateway --> UserService
+    Gateway --> TxnService
+    Gateway --> HistoryService
+    Frontend --> Gateway
+
+    %% Monitoring & Logging
+    subgraph Observability
+        Prom[Prometheus]
+        Grafana[Grafana]
+        Loki[Loki Logs]
+        Alerts[Alertmanager]
+    end
+    EKS --> Prom
+    AKS --> Prom
+    Prom --> Grafana
+    Prom --> Alerts
+    Loki --> Grafana
+
+    %% Security
+    subgraph Security
+        Vault[HashiCorp Vault]
+        OPA[OPA/Gatekeeper]
+        Trivy[Trivy Scans]
+        Certs[Cert-Manager TLS]
+    end
+    Actions --> Trivy
+    EKS --> Vault
+    AKS --> Vault
+    Services --> OPA
+    Services --> Certs
+
+    %% Users
+    User[End User] --> Frontend
+    Alerts --> Dev
+
+````
+
+### 🔄 CI/CD + GitOps Workflow
+
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant GH as GitHub Repo
+    participant Actions as GitHub Actions
+    participant GHCR as GitHub Container Registry
+    participant Argo as Argo CD
+    participant K8s as Kubernetes Cluster
+
+    Dev->>GH: Push code
+    GH->>Actions: Trigger CI/CD pipeline
+    Actions->>Actions: Run tests, lint, build
+    Actions->>GHCR: Push Docker image
+    Actions->>GH: Update manifests (Helm/Manifests)
+    GH->>Argo: GitOps sync triggered
+    Argo->>K8s: Deploy updated workloads
+    K8s->>Dev: Updated app live
+```
+
+---
+
 ## 👤 Author
-**Shakeel Khuhro**  
-- DevOps Engineer | GitHub Campus Expert | Microsoft Learn Student Ambassador (Gold)  
-- [GitHub](https://github.com/Shakeelkhuhro) • [LinkedIn](https://linkedin.com/in/shakeelkhuhro)  
+
+**Shakeel Khuhro**
+
+* DevOps Engineer | GitHub Campus Expert | Microsoft Learn Student Ambassador (Gold)
+* [GitHub](https://github.com/Shakeelkhuhro) • [LinkedIn](https://linkedin.com/in/shakeelkhuhro)
 
 ---
 
-✨ *This project is a showcase of modern DevOps & SRE practices for cloud-native systems. It’s continuously evolving as part of my advanced DevOps learning journey.*  
----
+✨ This project is a showcase of modern DevOps & SRE practices for cloud-native systems. It’s continuously evolving as part of my advanced DevOps learning journey.
+
+````
