@@ -1,0 +1,31 @@
+# Node
+node_modules/
+dist/
+.env
+npm-debug.log
+yarn-error.log
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+
+# Ansible
+*.retry
+
+# Docker
+docker-compose.override.yml
+
+# IDE / Editors
+.vscode/
+.idea/
+*.swp
