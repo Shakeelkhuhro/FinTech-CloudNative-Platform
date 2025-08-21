@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  basic-checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Verify repo structure
+        run: |
+          echo "Repository structure:"
+          ls -R
+          test -d app && echo "✅ app/ exists"
+          test -d infra && echo "✅ infra/ exists"
+          test -d ansible && echo "✅ ansible/ exists"
+          test -d k8s && echo "✅ k8s/ exists"
+          test -d monitoring && echo "✅ monitoring/ exists"
+          test -d security && echo "✅ security/ exists"
+          test -d docs && echo "✅ docs/ exists"
