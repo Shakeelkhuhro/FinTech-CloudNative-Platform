@@ -4,6 +4,8 @@ A **production-grade FinTech transaction platform** (digital wallet simulation) 
 
 This project is designed as a **portfolio-quality system** to demonstrate how modern enterprises run **cloud-native applications with SRE & DevOps best practices**.
 
+![CI](https://github.com/Shakeelkhuhro/FinTech-CloudNative-Platform/actions/workflows/ci.yml/badge.svg)
+
 ---
 
 **Core Highlights:**
