@@ -11,16 +11,21 @@ import (
 
 var jwtKey = []byte("supersecretkey")
 
+type Credentials struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
 type User struct {
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Joined   string `json:"joined"`
+	Password string `json:"-"`
 }
 
 // In-memory users
 var users = map[string]User{
-	"admin": {Username: "admin", Email: "admin@fintech.com", Joined: "2024-01-01", Password: "password"},
+	"admin":            {Username: "admin", Email: "admin@fintech.com", Joined: "2024-01-01", Password: "password"},
 	"demo@fintech.com": {Username: "demo@fintech.com", Email: "demo@fintech.com", Joined: "2024-01-01", Password: "demo123"},
 }
 
@@ -45,7 +50,6 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
 		return
 	}
-
 
 	user, ok := users[creds.Username]
 	if !ok || user.Password != creds.Password {
@@ -73,10 +77,12 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		"token": tokenString,
 		"user": map[string]string{
 			"username": user.Username,
-			"email": user.Email,
-			"joined": user.Joined,
+			"email":    user.Email,
+			"joined":   user.Joined,
 		},
 	})
+}
+
 // GET /profile (JWT required)
 func profileHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
@@ -107,10 +113,9 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	json.NewEncoder(w).Encode(map[string]string{
 		"username": user.Username,
-		"email": user.Email,
-		"joined": user.Joined,
+		"email":    user.Email,
+		"joined":   user.Joined,
 	})
-}
 }
 
 // CORS middleware

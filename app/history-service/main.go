@@ -12,7 +12,16 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+var jwtKey = []byte("supersecretkey") // Should match User Service
+
+type Transaction struct {
+	ID     string  `json:"id"`
+	Amount float64 `json:"amount"`
+	Type   string  `json:"type"`
+}
+
 // In-memory user transaction storage: map[user] -> []Transaction
+var userTransactions = make(map[string][]Transaction)
 
 // JWT middleware
 func jwtAuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
