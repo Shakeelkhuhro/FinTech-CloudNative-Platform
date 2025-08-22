@@ -80,8 +80,17 @@ func transactionHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	// Seed random number generator
 	rand.Seed(time.Now().UnixNano())
+
+	// Health-check route
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("✅ Transaction Service is running on :8082"))
+	})
+
+	// Protect /transaction with JWT middleware
 	http.HandleFunc("/transaction", jwtAuthMiddleware(transactionHandler))
+
 	log.Println("Transaction Service running on :8082")
 	log.Fatal(http.ListenAndServe(":8082", nil))
 }

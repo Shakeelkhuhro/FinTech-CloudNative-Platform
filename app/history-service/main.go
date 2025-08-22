@@ -12,16 +12,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var jwtKey = []byte("supersecretkey") // Should match User Service
-
-type Transaction struct {
-	ID     string  `json:"id"`
-	Amount float64 `json:"amount"`
-	Type   string  `json:"type"`
-}
-
 // In-memory user transaction storage: map[user] -> []Transaction
-var userTransactions = make(map[string][]Transaction)
 
 // JWT middleware
 func jwtAuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
@@ -40,13 +31,11 @@ func jwtAuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			http.Error(w, "Invalid token", http.StatusUnauthorized)
 			return
 		}
-		// Attach username to context (for simplicity, use subject claim)
 		username := claims.Subject
 		if username == "" {
 			http.Error(w, "Invalid token claims", http.StatusUnauthorized)
 			return
 		}
-		// Set username in request context (or header for simplicity)
 		r.Header.Set("X-User", username)
 		next(w, r)
 	}
@@ -92,10 +81,30 @@ func historyHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(txs)
 }
 
+// CORS middleware
+func withCORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	rand.Seed(time.Now().UnixNano())
-	http.HandleFunc("/transaction", jwtAuthMiddleware(transactionHandler))
-	http.HandleFunc("/history", jwtAuthMiddleware(historyHandler))
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("✅ History Service is running on :8083"))
+	})
+	mux.HandleFunc("/transaction", jwtAuthMiddleware(transactionHandler))
+	mux.HandleFunc("/history", jwtAuthMiddleware(historyHandler))
+
 	log.Println("History Service running on :8083")
-	log.Fatal(http.ListenAndServe(":8083", nil))
+	log.Fatal(http.ListenAndServe(":8083", withCORS(mux)))
 }
