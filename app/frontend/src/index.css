@@ -1,0 +1,26 @@
+body {
+  font-family: 'Inter', 'Roboto', Arial, sans-serif;
+  background: #f6fafd;
+  color: #222;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Inter', 'Roboto', Arial, sans-serif;
+  font-weight: 800;
+  margin-top: 0;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  background: #e3f2fd;
+}
+::-webkit-scrollbar-thumb {
+  background: #1976d2;
+  border-radius: 4px;
+}
